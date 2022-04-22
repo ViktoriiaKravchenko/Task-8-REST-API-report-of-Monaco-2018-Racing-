@@ -1,0 +1,302 @@
+openapi: 3.0.2
+info:
+  title: Monaco Formula-1 Racing 2018 API
+  description: This API shows the results of Monaco Formula-1 Racing 2018
+  version: 0.0.1
+  license:
+    name: Apache License 2.0
+servers:
+  - url: http://127.0.0.1:5000
+  
+paths:
+  /api/v1.0/report:
+    get:
+      tags:
+      - Common Statistic
+      summary: Returns a list of drivers
+      description: Ascending order is used by default
+      operationId: CommonStatistic
+      parameters:
+        - $ref: "#/components/parameters/format"
+      responses:
+        "200":
+          description: Returns an array of drivers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/full_report_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/full_report"
+
+
+  /api/v1.0/report/:
+    get:
+      tags:
+      - Ordered Common Statistic
+      summary: Returns a list of drivers in specific order
+      description: Optional ascending or descending order
+      operationId: OrderedCommonStatistic
+      parameters:
+        - $ref: "#/components/parameters/format"
+        - $ref: "#/components/parameters/order"
+      responses:
+        "200":
+          description: Returns an array of drivers in specific order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/full_report_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/full_report"
+
+
+  /api/v1.0/report/drivers:
+    get:
+      tags:
+      - Drivers Names
+      summary: Returns a list of drivers' names and ids
+      description: Ascending order is used by default
+      operationId: DriversNames
+      parameters:
+        - $ref: "#/components/parameters/format"
+      responses:
+        "200":
+          description: Returns an array of drivers' names and ids
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/short_report_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/short_report"
+
+
+
+  /api/v1.0/report/drivers/ordered:
+    get:
+      tags:
+      - Ordered Drivers' Names
+      summary: Returns a list of drivers' names and ids in specific order
+      description: Optional ascending or descending order
+      operationId: OrderedDriversNames
+      parameters:
+        - $ref: "#/components/parameters/format"
+        - $ref: "#/components/parameters/order"
+      responses:
+        "200":
+          description: Returns an array of drivers' names and ids in specific order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/short_report_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/short_report"
+
+
+
+  /api/v1.0/report/drivers/driver:
+    get:
+      tags:
+      - Driver Info
+      summary: Returns driver info
+      description: Choosing driver by his id
+      operationId: DriverInfo
+      parameters:
+        - $ref: "#/components/parameters/format"
+        - $ref: "#/components/parameters/driverId"
+      responses:
+        "200":
+          description: Returns driver info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/single_driver_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/single_driver"
+
+security:
+  - ApiKeyAuth: []
+
+components:
+  parameters:
+    format:
+      name: format
+      in: query
+      description: Determines the format of the response. Possible values are 'json' and 'xml'
+      required: True
+      schema:
+        type: string
+        enum: [json, xml]
+
+    order:
+      name: order
+      in: query
+      description: Determines the order of the response. Possible values are 'asc' and 'desc'
+      required: True
+      schema:
+        type: string
+        enum: [asc, desc]
+
+    driverId:
+      name: driverId
+      in: query
+      description: Determines the driver about whom information is shown
+      required: True
+      schema:
+        type: string
+        enum: [DRR, SVF, LHM, KRF, VBM, EOF, FAM, CSR, SPF, PGS, NHR, SVM, SSW, CLS, RGH, BHS, MES, LSW, KMH]
+
+
+
+  schemas:
+    full_report_json:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Count of drivers
+          example: 19
+        title:
+          type: string
+          description: Title of page
+          example: Monaco Racing 2018 Drivers
+        drivers:
+          $ref: "#/components/schemas/extended_drivers"
+
+  
+    full_report:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Count of drivers
+          example: 19
+        title:
+          type: string
+          description: Title of page
+          example: Monaco Racing 2018 Drivers
+        drivers:
+          type: object
+          properties: 
+            driver:
+              $ref: "#/components/schemas/extended_drivers"
+
+
+    short_report_json:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Count of drivers
+          example: 19
+        title:
+          type: string
+          description: Title of page
+          example: Monaco Racing 2018 Drivers Names
+        drivers:
+          $ref: "#/components/schemas/short_drivers"
+    
+    
+    
+    short_report:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Count of drivers
+          example: 19
+        title:
+          type: string
+          description: Title of page
+          example: Monaco Racing 2018 Drivers Names
+        drivers:
+          type: object
+          properties: 
+            driver:
+              $ref: "#/components/schemas/short_drivers" 
+
+
+    single_driver_json:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of page
+          example: Monaco Racing 2018 Driver Information
+        drivers:
+          $ref: "#/components/schemas/extended_drivers"    
+    
+    
+    single_driver:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of page
+          example: Monaco Racing 2018 Driver Information
+        drivers:
+          type: object
+          properties: 
+            driver:
+              $ref: "#/components/schemas/extended_drivers"        
+        
+    extended_drivers:
+      title: Drivers
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            example: KMH
+
+          name:
+            type: string
+            example: Kevin Magnussen
+
+          car:
+            type: string
+            example: HAAS FERRARI
+
+          startTime:
+            type: string
+            example: 12:02:51.003
+
+          endTime:
+            type: string
+            example: 1:04:04.396
+
+          deltaTime:
+            type: string
+            example: 1:01:13.393000
+
+
+    short_drivers:
+      title: Drivers
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            example: KMH
+
+          name:
+            type: string
+            example: Kevin Magnussen
+  
+  
+  
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+     
+
+
+
